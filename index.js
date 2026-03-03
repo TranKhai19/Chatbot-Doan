@@ -78,17 +78,18 @@ app.post("/api/chat", async (req, res) => {
 // Endpoint 2: Xử lý Báo cáo ẩn danh
 app.post("/api/report", async (req, res) => {
   try {
-    const { thoi_gian, dia_diem, mo_ta, nguy_hiem_khẩn_cap } = req.body;
+    const { thoi_gian, dia_diem, mo_ta, danger_level } = req.body;
     const { data, error } = await supabase
       .from('anonymous_reports')
-      .insert([{ thoi_gian, dia_diem, mo_ta, nguy_hiem_khẩn_cap }]);
+      .insert([{ thoi_gian, dia_diem, mo_ta, danger_level }]);
 
     if (error) throw error;
     res.status(200).json({ 
         message: "Cảm ơn bạn đã cung cấp thông tin. Nhà trường và Đoàn Thanh niên sẽ xử lý theo quy định." 
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Lỗi khi gửi báo cáo:', error.message || error);
+    res.status(500).json({ error: error.message || 'Lỗi xử lý Database' });
   }
 });
 
